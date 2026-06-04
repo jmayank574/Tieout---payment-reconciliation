@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: tieout-postgres
+    environment:
+      POSTGRES_USER: tieout_user
+      POSTGRES_PASSWORD: tieout_password
+      POSTGRES_DB: tieout
+    ports:
+      - "5433:5432"
+    volumes:
+      - tieout_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tieout_user -d tieout"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  tieout_postgres_data:

@@ -33,6 +33,8 @@ function statusViewKey(status: string[]): string {
 interface FilterBarProps {
   filters: ExceptionFilters;
   onChange: (patch: Partial<ExceptionFilters>) => void;
+  groups?: { id: string; name: string }[];
+  onDownloadCsv?: () => void;
 }
 
 const sel =
@@ -44,9 +46,9 @@ const inp =
   'focus:outline-none focus:ring-2 focus:ring-[#0C7785]/30 focus:border-[#0C7785] ' +
   'placeholder:text-gray-400 transition-colors';
 
-export function FilterBar({ filters, onChange }: FilterBarProps) {
+export function FilterBar({ filters, onChange, groups = [], onDownloadCsv }: FilterBarProps) {
   const currentKey = statusViewKey(filters.status);
-  const hasSecondary = !!(filters.match_type || filters.amount_min || filters.amount_max);
+  const hasSecondary = !!(filters.match_type || filters.amount_min || filters.amount_max || filters.group_id);
 
   return (
     <div className="flex flex-wrap items-center gap-2.5">
@@ -89,6 +91,28 @@ export function FilterBar({ filters, onChange }: FilterBarProps) {
         ))}
       </select>
 
+      {/* Group filter — always visible if a group_id is active (from URL) or groups loaded */}
+      {(groups.length > 0 || filters.group_id) && (
+        <select
+          value={filters.group_id ?? ''}
+          onChange={e => {
+            const g = groups.find(g => g.id === e.target.value);
+            onChange({ group_id: g?.id ?? undefined, group_name: g?.name ?? undefined, page: 1 });
+          }}
+          className={sel}
+          aria-label="Employer group"
+        >
+          <option value="">All groups</option>
+          {/* Synthetic option keeps the label visible before groups list loads */}
+          {filters.group_id && !groups.find(g => g.id === filters.group_id) && (
+            <option value={filters.group_id}>{filters.group_name ?? filters.group_id}</option>
+          )}
+          {groups.map(g => (
+            <option key={g.id} value={g.id}>{g.name}</option>
+          ))}
+        </select>
+      )}
+
       {/* Amount range */}
       <div className="flex items-center gap-1.5">
         <span className="text-xs text-gray-400">$</span>
@@ -119,10 +143,24 @@ export function FilterBar({ filters, onChange }: FilterBarProps) {
 
       {hasSecondary && (
         <button
-          onClick={() => onChange({ match_type: '', amount_min: '', amount_max: '', page: 1 })}
+          onClick={() => onChange({ match_type: '', amount_min: '', amount_max: '', group_id: undefined, group_name: undefined, page: 1 })}
           className="text-xs text-gray-400 hover:text-gray-700 underline underline-offset-2 transition-colors"
         >
           Clear
+        </button>
+      )}
+
+      {/* CSV download — pushed to the right */}
+      {onDownloadCsv && (
+        <button
+          onClick={onDownloadCsv}
+          className="ml-auto flex items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          aria-label="Download exceptions as CSV"
+        >
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Download CSV
         </button>
       )}
     </div>

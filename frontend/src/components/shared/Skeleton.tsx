@@ -1,3 +1,5 @@
+import React from 'react';
+
 export function SkeletonRow() {
   return (
     <tr className="animate-pulse">
@@ -36,7 +38,7 @@ export function SkeletonCard() {
 
 interface EmptyStateProps {
   title: string;
-  description?: string;
+  description?: string | React.ReactNode;
 }
 
 export function EmptyState({ title, description }: EmptyStateProps) {

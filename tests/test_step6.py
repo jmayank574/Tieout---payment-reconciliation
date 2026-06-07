@@ -451,3 +451,78 @@ class TestGetGroupDetail:
             assert isinstance(entry.amount, Decimal), (
                 f"entry {entry.id} amount is {type(entry.amount)}, expected Decimal"
             )
+
+
+# ===========================================================================
+# group_id filter on list_exceptions
+# ===========================================================================
+
+class TestGroupIdFilter:
+    """
+    Verify the group_id filter on list_exceptions.
+
+    The exception queue is bank-event-centric.  A group only appears when one
+    of its bank events sits in a NEEDS_REVIEW / FLAGGED / PARTIALLY_RESOLVED
+    reconciliation_match that has match_ledger_entry rows pointing to that
+    group's ledger entries.
+
+    In the step6_db fixture:
+      - Group A has two queue-visible matches (NEEDS_REVIEW $20k + PARTIALLY_RESOLVED $15k)
+      - Group B's unmatched $10k claim_payment has NO bank event — it never
+        enters the exception queue (it shows as pending_claims_liability instead)
+      - Group C is in the same situation as B
+
+    So Group A filter returns items; B and C filters return empty — both are
+    correct behaviour for the filter.
+    """
+
+    def test_group_a_filter_returns_its_exceptions(self, step6_db):
+        from backend.exceptions import service as exc_service
+        session = step6_db["session"]
+        gA = step6_db["gA"]
+
+        result = exc_service.list_exceptions(session, group_id=gA.id, page_size=100)
+        assert result["total"] > 0, "Group A has NEEDS_REVIEW and PARTIALLY_RESOLVED matches — filter should return them"
+
+    def test_group_b_filter_returns_empty(self, step6_db):
+        """Group B has no bank events in the queue — filter correctly returns nothing."""
+        from backend.exceptions import service as exc_service
+        session = step6_db["session"]
+        gB = step6_db["gB"]
+
+        result = exc_service.list_exceptions(session, group_id=gB.id, page_size=100)
+        assert result["total"] == 0, (
+            "Group B's unmatched LEs have no bank event — they are pending_claims_liability, "
+            "not exception queue items"
+        )
+
+    def test_group_filter_is_exclusive(self, step6_db):
+        """Group A's results must not include bank events from Group B or C."""
+        from backend.exceptions import service as exc_service
+        session = step6_db["session"]
+        gA = step6_db["gA"]
+        gB = step6_db["gB"]
+        gC = step6_db["gC"]
+
+        ids_a = {i["bank_event_id"] for i in exc_service.list_exceptions(session, group_id=gA.id, page_size=100)["items"]}
+        ids_b = {i["bank_event_id"] for i in exc_service.list_exceptions(session, group_id=gB.id, page_size=100)["items"]}
+        ids_c = {i["bank_event_id"] for i in exc_service.list_exceptions(session, group_id=gC.id, page_size=100)["items"]}
+
+        assert ids_a.isdisjoint(ids_b), "Group A and B results must not overlap"
+        assert ids_a.isdisjoint(ids_c), "Group A and C results must not overlap"
+
+    def test_unknown_group_returns_empty(self, step6_db):
+        import uuid as _uuid
+        from backend.exceptions import service as exc_service
+        session = step6_db["session"]
+        result = exc_service.list_exceptions(session, group_id=_uuid.uuid4(), page_size=100)
+        assert result["total"] == 0
+        assert result["items"] == []
+
+    def test_no_group_filter_returns_all(self, step6_db):
+        """Unfiltered result must include at least as many items as any single group filter."""
+        from backend.exceptions import service as exc_service
+        session = step6_db["session"]
+        result_all = exc_service.list_exceptions(session, page_size=100)
+        result_a   = exc_service.list_exceptions(session, group_id=step6_db["gA"].id, page_size=100)
+        assert result_all["total"] >= result_a["total"]

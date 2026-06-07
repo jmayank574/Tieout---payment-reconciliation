@@ -644,6 +644,53 @@ class DataGenerator:
                 self._add_gtl(bank_ref, None, ExceptionType.BANK_ONLY_NOISE)
                 counter += 1
 
+        # ── Guaranteed large-and-old exceptions (stale-alert banner demo) ────
+        # Two large stop-loss reimbursements with a 3% amount variance and
+        # posting dates 30-55 days old.  The 3% variance pushes confidence to
+        # ~0.52 (< AUTO_MATCH_THRESHOLD) → NEEDS_REVIEW.  The old posting date
+        # guarantees the ">= $50k open >= 14 days" banner fires on first load.
+        _LARGE_STALE = [
+            (Decimal("74850.00"), 32),   # $74,850  posted 32 days ago
+            (Decimal("112340.00"), 51),  # $112,340 posted 51 days ago
+        ]
+        _today = date.today()
+        groups_with_sl = [
+            g for g in self.created_objects["groups"] if g.stop_loss_carrier
+        ]
+        for i, (ls_amount, days_old) in enumerate(_LARGE_STALE):
+            if not groups_with_sl:
+                break
+            group = groups_with_sl[i % len(groups_with_sl)]
+            posted = _today - timedelta(days=days_old)
+            expected = posted - timedelta(days=10)
+            row_ref = f"sl_reimb_stale_{i}_{group.id}"
+            bank_ref = f"trace_{counter:06d}"
+
+            # 820 record → ingest creates a stop_loss_reimbursement LedgerEntry
+            self._820_records.append({
+                "row_ref": row_ref,
+                "group_id": str(group.id),
+                "entry_type": "stop_loss_reimbursement",
+                "direction": "credit",
+                "amount": str(ls_amount),
+                "expected_date": expected.isoformat(),
+                "counterparty": group.stop_loss_carrier,
+                "source_artifact": "820",
+                "bank_account_id": operating_id,
+            })
+            # Bank event: 3% over the ledger amount → fuzzy short/over match → NEEDS_REVIEW
+            bank_amount = (ls_amount * Decimal("1.03")).quantize(Decimal("0.01"))
+            self._bank_records.append({
+                "bank_reference": bank_ref,
+                "bank_account_id": operating_id,
+                "posted_date": posted.isoformat(),
+                "amount": str(bank_amount),
+                "direction": "credit",
+                "descriptor": f"WIRE {group.stop_loss_carrier} SL REIMB (AMT VAR)",
+            })
+            self._add_gtl(bank_ref, row_ref, ExceptionType.SHORT_OVER_FUNDING)
+            counter += 1
+
         # Bulk-insert all ground_truth_link rows queued during this method
         self.session.bulk_save_objects(self._pending_gtls)
         self.session.flush()

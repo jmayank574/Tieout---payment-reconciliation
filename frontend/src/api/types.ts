@@ -87,6 +87,8 @@ export interface ExceptionFilters {
   amount_min: string;
   amount_max: string;
   page: number;
+  group_id?: string;
+  group_name?: string;
 }
 
 export interface AllocationItem {

@@ -607,6 +607,7 @@ export function filterMockExceptions(
     sort?: string;
     amount_min?: string;
     amount_max?: string;
+    group_id?: string;   // no-op in demo mode — mock items have no group context
     page?: number;
     page_size?: number;
   },

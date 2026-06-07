@@ -17,6 +17,7 @@ export function useExceptions(filters: ExceptionFilters) {
           sort: filters.sort,
           amount_min: filters.amount_min || undefined,
           amount_max: filters.amount_max || undefined,
+          group_id: filters.group_id || undefined,
           page: filters.page,
           page_size: 20,
         });
@@ -27,6 +28,7 @@ export function useExceptions(filters: ExceptionFilters) {
       if (filters.match_type) params.set('match_type', filters.match_type);
       if (filters.amount_min) params.set('amount_min', filters.amount_min);
       if (filters.amount_max) params.set('amount_max', filters.amount_max);
+      if (filters.group_id)   params.set('group_id', filters.group_id);
       params.set('sort', filters.sort);
       params.set('page', String(filters.page));
       params.set('page_size', '20');

@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { useGroupPosition } from '../../hooks/useCashPosition';
 import type { CashLedgerEntry } from '../../api/types';
 import { Money } from '../shared/Money';
@@ -36,6 +37,7 @@ function EntryRow({ entry }: { entry: CashLedgerEntry }) {
 
 export function CashGroupDrawer({ groupId, groupName, onClose }: Props) {
   const { data: detail, isLoading } = useGroupPosition(groupId);
+  const navigate = useNavigate();
 
   return (
     <AnimatePresence>
@@ -72,7 +74,18 @@ export function CashGroupDrawer({ groupId, groupName, onClose }: Props) {
                 </div>
               ) : (
                 <div>
-                  <p className="text-xs text-gray-500">{detail.group_name}</p>
+                  <div className="flex items-center gap-3">
+                    <p className="text-xs text-gray-500">{detail.group_name}</p>
+                    <button
+                      onClick={() => {
+                        onClose();
+                        navigate(`/?group_id=${detail.group_id}&group_name=${encodeURIComponent(detail.group_name)}`);
+                      }}
+                      className="text-xs font-medium text-[#0C7785] hover:underline"
+                    >
+                      View exceptions →
+                    </button>
+                  </div>
                   <div className="mt-1 flex items-baseline gap-3">
                     <Money
                       value={detail.funded_balance}

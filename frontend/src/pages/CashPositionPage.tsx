@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { GroupPosition } from '../api/types';
 import { CashGroupDrawer } from '../components/cash/CashGroupDrawer';
 import { CashStatStrip } from '../components/cash/CashStatStrip';
@@ -60,6 +61,7 @@ function SortHeader({
 
 export function CashPositionPage() {
   const { data, isLoading } = useCashPosition();
+  const navigate = useNavigate();
   const [sortKey, setSortKey] = useState<SortKey>('coverage');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
@@ -77,6 +79,11 @@ export function CashPositionPage() {
   function openGroup(group: GroupPosition) {
     setSelectedGroupId(group.group_id);
     setSelectedGroupName(group.group_name);
+  }
+
+  function drillToQueue(group: GroupPosition, e: React.MouseEvent) {
+    e.stopPropagation();
+    navigate(`/?group_id=${group.group_id}&group_name=${encodeURIComponent(group.group_name)}`);
   }
 
   const groups = data ? sortGroups(data.groups, sortKey, sortDir) : [];
@@ -178,6 +185,15 @@ export function CashPositionPage() {
                   </td>
                   <td className="px-3 py-3 text-right text-sm tabular-nums text-gray-500">
                     {group.member_count.toLocaleString()}
+                  </td>
+                  <td className="px-3 py-3 text-right">
+                    <button
+                      onClick={e => drillToQueue(group, e)}
+                      className="text-xs font-medium text-[#0C7785] hover:underline whitespace-nowrap"
+                      title={`View ${group.group_name}'s exceptions in the queue`}
+                    >
+                      View exceptions →
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -259,6 +259,7 @@ def list_exceptions(
     amount_min: Decimal | None = None,
     amount_max: Decimal | None = None,
     bank_account_id: UUID | None = None,
+    group_id: UUID | None = None,
     sort: str = "confidence_asc",
     page: int = 1,
     page_size: int = 20,
@@ -283,6 +284,15 @@ def list_exceptions(
         q = q.filter(BankEvent.amount >= amount_min)
     if amount_max is not None:
         q = q.filter(BankEvent.amount <= amount_max)
+    if group_id is not None:
+        # Join through match_ledger_entry → ledger_entry to filter by employer group.
+        # distinct() prevents duplicate rows when a match covers multiple LEs.
+        q = (
+            q.join(MatchLedgerEntry, ReconciliationMatch.id == MatchLedgerEntry.reconciliation_match_id)
+            .join(LedgerEntry, MatchLedgerEntry.ledger_entry_id == LedgerEntry.id)
+            .filter(LedgerEntry.group_id == group_id)
+            .distinct()
+        )
 
     total = q.count()
 

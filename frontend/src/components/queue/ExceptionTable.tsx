@@ -93,7 +93,11 @@ export function ExceptionTable({
             ) : data?.items.length === 0 ? (
               <EmptyState
                 title="No exceptions match these filters"
-                description="Try clearing the filters or switching sort order."
+                description={
+                  filters.group_id
+                    ? `No open bank exceptions for ${filters.group_name ?? 'this group'}. Any shortfall shown on the Cash position screen reflects pending batch claims awaiting ACH settlement — those are not bank events and don't appear in this queue.`
+                    : 'Try clearing the filters or switching sort order.'
+                }
               />
             ) : (
               <AnimatePresence initial={false}>

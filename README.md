@@ -39,7 +39,11 @@ Dataset: 345 bank events against ~3,000 ledger entries across 25 employer groups
 
 Tieout exposes two views off the same reconciled data.
 
-**Reconciliation queue** (`/queue`): bank events matched against ledger entries. Every match gets a confidence score; anything below 0.80 routes to a human reviewer who can accept, manually match, split, write off, flag, or reopen. Every action writes an audit trail.
+**Reconciliation queue** (`/queue`): bank events matched against ledger entries. Every match gets a confidence score; anything below 0.80 routes to a human reviewer who can accept, manually match, split, write off, flag, or reopen. Every action writes an audit trail. Ops additions:
+
+- **Employer-group filter** — scope the table to one group's exceptions; integrates with the cash-position drill-down so clicking a shortfall group navigates directly to its open exceptions
+- **Stale high-value alert** — amber banner fires when any open exception is ≥ $50,000 and has been open ≥ 14 days
+- **CSV export** — downloads the current filtered view (up to 1,000 rows) as `tieout-exceptions-YYYY-MM-DD.csv`
 
 **Cash position** (`/cash-position`): per-group balance and coverage status derived from the same reconciled ledger. A group's funded balance is the net of bank-*confirmed* credits (employer_funding, stop_loss_reimbursement, admin_fee) minus cleared debits (claim_payment, stop_loss_premium). Pending claims liability is the sum of adjudicated claim_payment entries whose ACH batch has not yet settled — money owed but not yet bank-confirmed. In the seeded data, employer_funding is set at 125% of regular claims (the prefunded buffer), so healthy groups carry a positive funded balance; a shortfall means pending liability exceeds that available balance.
 
@@ -174,7 +178,7 @@ make test         Run pytest suite (86 tests across all steps, ~3 min)
 
 **Full audit trail.** Every operator action (accept, match, split, write-off, flag, reopen) writes a structured `audit_log` row with before/after status and the actor identity. The exception detail drawer shows the full timeline.
 
-**86 tests** across six steps, covering: batch-total money conservation, idempotent ingest, round-trip dollar totals, ground-truth resolution, all six match stages, operator resolution workflow, cash-position math (healthy/watch/shortfall), partially_resolved edge case (no double-count), Decimal precision, and an amount-collision anti-test that proves two batches with the same sum and close dates are not cross-matched when trace references differ.
+**91 tests** across six steps, covering: batch-total money conservation, idempotent ingest, round-trip dollar totals, ground-truth resolution, all six match stages, operator resolution workflow, cash-position math (healthy/watch/shortfall), partially_resolved edge case (no double-count), Decimal precision, and an amount-collision anti-test that proves two batches with the same sum and close dates are not cross-matched when trace references differ.
 
 ---
 

@@ -10,7 +10,7 @@ from backend.db.models import Base
 
 
 # Create engine (synchronous)
-engine = create_engine(DATABASE_URL, echo=False)
+engine = create_engine(DATABASE_URL, echo=False, pool_pre_ping=True)
 
 # Create session factory
 SessionLocal = sessionmaker(

@@ -8,7 +8,7 @@ The industry runs on Excel macros. Tieout is the bank-rec macro productized: a w
 
 ## Reconciliation Scorecard (seed=42)
 
-Measured against seeded ground truth — the engine never reads `ground_truth_link` during matching; the scorecard is computed afterwards by comparing engine output to the true labels. That separation is what makes the numbers credible.
+Measured against seeded ground truth — the engine never reads `ground_truth_link` during matching; the scorecard is computed afterwards by comparing engine output to the true labels. That separation is what makes the numbers credible. This is an offline evaluation artifact produced by `make evaluate` against a specific seed run — it is not surfaced anywhere in the running app, since a single static snapshot can't represent whatever happens to be in a live database.
 
 | Metric | Value |
 |--------|-------|

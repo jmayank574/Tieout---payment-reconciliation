@@ -4,7 +4,6 @@ import { AppLayout } from './components/layout/AppLayout';
 import { DataSourceProvider } from './context/DataSourceContext';
 import { CashPositionPage } from './pages/CashPositionPage';
 import { QueuePage } from './pages/QueuePage';
-import { ScorecardPage } from './pages/ScorecardPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,7 +22,6 @@ export function App() {
           <Routes>
             <Route element={<AppLayout />}>
               <Route index element={<QueuePage />} />
-              <Route path="scorecard" element={<ScorecardPage />} />
               <Route path="cash-position" element={<CashPositionPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>

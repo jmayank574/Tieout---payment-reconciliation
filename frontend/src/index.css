@@ -7,10 +7,12 @@
     font-family: "Plus Jakarta Sans", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   body {
-    @apply bg-[#F7F8F9] text-gray-900;
+    @apply bg-canvas text-gray-900;
+    overflow-x: hidden;
   }
 
   .font-mono {

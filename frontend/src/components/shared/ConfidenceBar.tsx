@@ -16,7 +16,7 @@ export function ConfidenceBar({ confidence, showLabel = true, className = '' }: 
       <div className={`flex items-center gap-2 ${className}`}>
         <div className="h-1 w-10 rounded-full bg-gray-200" />
         {showLabel && (
-          <span className="tabular text-xs text-gray-400" style={{ fontFamily: '"JetBrains Mono", monospace' }}>
+          <span className="font-mono text-xs text-gray-400">
             —
           </span>
         )}
@@ -38,8 +38,8 @@ export function ConfidenceBar({ confidence, showLabel = true, className = '' }: 
       </div>
       {showLabel && (
         <span
-          className="tabular text-xs font-medium leading-none"
-          style={{ color, fontFamily: '"JetBrains Mono", monospace', fontVariantNumeric: 'tabular-nums' }}
+          className="font-mono tabular-nums text-xs font-medium leading-none"
+          style={{ color }}
         >
           {pct}%
         </span>

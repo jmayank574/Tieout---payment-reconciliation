@@ -139,7 +139,7 @@ export function QueuePage() {
           <h1 className="text-lg font-semibold text-gray-900">
             Exception queue
             {filters.group_name && (
-              <span className="ml-2 text-sm font-normal text-[#0C7785]">
+              <span className="ml-2 text-sm font-normal text-accent">
                 · {filters.group_name}
               </span>
             )}

@@ -11,10 +11,7 @@ function FactRow({ label, value, mono }: FactRowProps) {
   return (
     <div className="flex flex-col gap-0.5">
       <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-400">{label}</dt>
-      <dd
-        className={`text-sm text-gray-900 ${mono ? 'tabular' : ''}`}
-        style={mono ? { fontFamily: '"JetBrains Mono", monospace' } : {}}
-      >
+      <dd className={`text-sm text-gray-900 ${mono ? 'font-mono tabular-nums' : ''}`}>
         {value}
       </dd>
     </div>
@@ -53,7 +50,7 @@ export function BankEventFacts({ detail }: BankEventFactsProps) {
         <FactRow
           label="Account ID"
           value={
-            <span className="text-[11px]" style={{ fontFamily: '"JetBrains Mono", monospace' }}>
+            <span className="font-mono text-[11px]">
               {be.bank_account_id.slice(0, 8)}…
             </span>
           }

@@ -1,5 +1,11 @@
+import { Link2 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useDataSource } from '../../context/DataSourceContext';
+
+const NAV_ITEMS = [
+  { to: '/', label: 'Queue', end: true },
+  { to: '/cash-position', label: 'Cash position', end: false },
+];
 
 export function TopBar() {
   const { isLive, checked } = useDataSource();
@@ -9,51 +15,31 @@ export function TopBar() {
       {/* Spectrum accent line */}
       <div className="h-[2px] w-full accent-line" />
 
-      <div className="mx-auto flex h-14 max-w-screen-xl items-center justify-between px-6">
+      <div className="mx-auto flex min-h-14 max-w-screen-xl flex-wrap items-center justify-between gap-y-2 px-4 py-2 sm:px-6">
         {/* Logo */}
-        <div className="flex items-center gap-6">
-          <span className="text-base font-semibold tracking-tight text-gray-900 select-none">
+        <div className="flex items-center gap-4 sm:gap-6">
+          <span className="flex items-center gap-1.5 text-base font-semibold tracking-tight text-gray-900 select-none">
+            <Link2 className="h-4 w-4 text-accent" strokeWidth={2.5} />
             Tieout
           </span>
 
           <nav className="flex items-center gap-1">
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) =>
-                `rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-[#F0FAFB] text-[#0C7785]'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`
-              }
-            >
-              Queue
-            </NavLink>
-            <NavLink
-              to="/scorecard"
-              className={({ isActive }) =>
-                `rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-[#F0FAFB] text-[#0C7785]'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`
-              }
-            >
-              Scorecard
-            </NavLink>
-            <NavLink
-              to="/cash-position"
-              className={({ isActive }) =>
-                `rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-[#F0FAFB] text-[#0C7785]'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`
-              }
-            >
-              Cash position
-            </NavLink>
+            {NAV_ITEMS.map(item => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) =>
+                  `rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-accent-light text-accent'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
           </nav>
         </div>
 

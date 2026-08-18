@@ -3,7 +3,7 @@ import type { AuditEvent } from '../../api/types';
 
 const ACTION_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   accept:    { label: 'Accepted',      color: 'text-emerald-700', bg: 'bg-emerald-100' },
-  match:     { label: 'Matched',       color: 'text-[#0C7785]',   bg: 'bg-[#E0F4F6]' },
+  match:     { label: 'Matched',       color: 'text-accent',      bg: 'bg-accent-faint' },
   split:     { label: 'Split',         color: 'text-sky-700',     bg: 'bg-sky-100' },
   write_off: { label: 'Written off',   color: 'text-red-700',     bg: 'bg-red-100' },
   flag:      { label: 'Flagged',       color: 'text-amber-700',   bg: 'bg-amber-100' },
@@ -35,10 +35,7 @@ function AuditEntry({ event }: { event: AuditEvent }) {
         <div className="flex items-baseline gap-2 flex-wrap">
           <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
           <span className="text-[11px] text-gray-400">by {event.actor}</span>
-          <span
-            className="text-[11px] text-gray-400 ml-auto"
-            style={{ fontFamily: '"JetBrains Mono", monospace' }}
-          >
+          <span className="ml-auto font-mono text-[11px] text-gray-400">
             {formatTs(event.created_at)}
           </span>
         </div>

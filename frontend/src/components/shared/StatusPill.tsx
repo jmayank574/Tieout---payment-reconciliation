@@ -1,5 +1,5 @@
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
-  needs_review: { label: 'Needs review', className: 'bg-[#E0F4F6] text-[#0C7785]' },
+  needs_review: { label: 'Needs review', className: 'bg-accent-faint text-accent' },
   flagged: { label: 'Flagged', className: 'bg-amber-50 text-amber-700' },
   partially_resolved: { label: 'Partial', className: 'bg-sky-50 text-sky-700' },
   resolved: { label: 'Resolved', className: 'bg-emerald-50 text-emerald-700' },

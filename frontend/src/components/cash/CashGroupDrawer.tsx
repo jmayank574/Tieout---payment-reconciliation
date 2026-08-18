@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useGroupPosition } from '../../hooks/useCashPosition';
 import type { CashLedgerEntry } from '../../api/types';
@@ -81,9 +82,10 @@ export function CashGroupDrawer({ groupId, groupName, onClose }: Props) {
                         onClose();
                         navigate(`/?group_id=${detail.group_id}&group_name=${encodeURIComponent(detail.group_name)}`);
                       }}
-                      className="text-xs font-medium text-[#0C7785] hover:underline"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
                     >
-                      View exceptions →
+                      View exceptions
+                      <ArrowRight className="h-3 w-3" />
                     </button>
                   </div>
                   <div className="mt-1 flex items-baseline gap-3">
@@ -98,12 +100,10 @@ export function CashGroupDrawer({ groupId, groupName, onClose }: Props) {
               )}
               <button
                 onClick={onClose}
-                className="ml-4 shrink-0 rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0C7785]"
+                className="ml-4 shrink-0 rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                 aria-label="Close"
               >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="h-4 w-4" />
               </button>
             </div>
 

@@ -14,18 +14,13 @@ function StatCard({ label, value, sub, accent, warn }: StatCardProps) {
   return (
     <motion.div
       layout
-      className="rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm"
+      className="min-w-0 overflow-hidden rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm"
     >
       <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{label}</p>
       <p
         className={`mt-2 text-2xl font-semibold leading-none ${
-          accent ? 'text-[#0C7785]' : warn ? 'text-red-600' : 'text-gray-900'
-        }`}
-        style={
-          typeof value === 'string' && value.startsWith('$')
-            ? { fontFamily: '"JetBrains Mono", monospace', fontVariantNumeric: 'tabular-nums' }
-            : {}
-        }
+          accent ? 'text-accent' : warn ? 'text-red-600' : 'text-gray-900'
+        } ${typeof value === 'string' && value.startsWith('$') ? 'font-mono tabular-nums' : ''}`}
       >
         {value}
       </p>
@@ -39,7 +34,7 @@ export function StatStrip() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
       </div>
     );
@@ -65,7 +60,7 @@ export function StatStrip() {
   const oldestDays = stats.oldest_unresolved_days;
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <StatCard
         label="Needs review"
         value={queueDepth}

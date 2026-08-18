@@ -14,10 +14,7 @@ export function Money({ value, className = '', showSign = false }: MoneyProps) {
   const sign = showSign && num < 0 ? '−' : '';
 
   return (
-    <span
-      className={`tabular ${className}`}
-      style={{ fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontVariantNumeric: 'tabular-nums' }}
-    >
+    <span className={`font-mono tabular-nums ${className}`}>
       {sign}${formatted}
     </span>
   );

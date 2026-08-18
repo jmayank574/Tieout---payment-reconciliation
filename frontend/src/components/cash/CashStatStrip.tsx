@@ -10,7 +10,7 @@ interface Props {
 
 function StatCard({ label, value, sub }: { label: string; value: React.ReactNode; sub?: string }) {
   return (
-    <motion.div layout className="rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
+    <motion.div layout className="min-w-0 overflow-hidden rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
       <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{label}</p>
       <div className="mt-2">{value}</div>
       {sub && <p className="mt-1 text-xs text-gray-400">{sub}</p>}
@@ -21,7 +21,7 @@ function StatCard({ label, value, sub }: { label: string; value: React.ReactNode
 export function CashStatStrip({ data, isLoading }: Props) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
       </div>
     );
@@ -32,9 +32,12 @@ export function CashStatStrip({ data, isLoading }: Props) {
   const groupCount = data.groups.length;
   const shortfallCount = summary.groups_in_shortfall;
   const watchCount = data.groups.filter(g => g.coverage_status === 'watch').length;
+  const totalExposure = data.groups
+    .filter(g => g.coverage_status === 'shortfall')
+    .reduce((sum, g) => sum + Math.max(0, parseFloat(g.pending_claims_liability) - parseFloat(g.available_to_cover)), 0);
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <StatCard
         label="Total funded (cleared)"
         value={
@@ -57,19 +60,24 @@ export function CashStatStrip({ data, isLoading }: Props) {
         sub="uncleared claim_payment entries"
       />
       <StatCard
-        label="Coverage alerts"
+        label="Risk exposure"
         value={
-          <p
-            className={`text-2xl font-semibold leading-none ${shortfallCount > 0 ? 'text-red-600' : watchCount > 0 ? 'text-amber-600' : 'text-emerald-700'}`}
-          >
-            {shortfallCount > 0
-              ? `${shortfallCount} shortfall${shortfallCount > 1 ? 's' : ''}`
-              : watchCount > 0
-              ? `${watchCount} watch`
-              : 'All clear'}
-          </p>
+          shortfallCount > 0 ? (
+            <Money
+              value={String(totalExposure)}
+              className="text-2xl font-semibold text-red-600"
+            />
+          ) : (
+            <p className={`text-2xl font-semibold leading-none ${watchCount > 0 ? 'text-amber-600' : 'text-emerald-700'}`}>
+              {watchCount > 0 ? `${watchCount} watch` : 'All clear'}
+            </p>
+          )
         }
-        sub={`${watchCount} watch · ${groupCount - shortfallCount - watchCount} healthy`}
+        sub={
+          shortfallCount > 0
+            ? `across ${shortfallCount} shortfall group${shortfallCount > 1 ? 's' : ''} · ${watchCount} watch`
+            : `${groupCount - shortfallCount - watchCount} of ${groupCount} groups healthy`
+        }
       />
     </div>
   );

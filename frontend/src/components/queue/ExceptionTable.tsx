@@ -1,4 +1,5 @@
 import { AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { ExceptionFilters, ExceptionList } from '../../api/types';
 import { EmptyState, SkeletonRow } from '../shared/Skeleton';
 import { ExceptionRow } from './ExceptionRow';
@@ -23,9 +24,10 @@ function Pagination({ page, total, pageSize, onChange }: PaginationProps) {
         <button
           disabled={page <= 1}
           onClick={() => onChange(page - 1)}
-          className="rounded px-2.5 py-1 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          aria-label="Previous page"
+          className="rounded px-2 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          ←
+          <ChevronLeft className="h-4 w-4" />
         </button>
         {Array.from({ length: totalPages }, (_, i) => i + 1)
           .filter(p => Math.abs(p - page) <= 2)
@@ -35,7 +37,7 @@ function Pagination({ page, total, pageSize, onChange }: PaginationProps) {
               onClick={() => onChange(p)}
               className={`rounded px-2.5 py-1 text-sm transition-colors ${
                 p === page
-                  ? 'bg-[#0C7785] text-white font-medium'
+                  ? 'bg-accent text-white font-medium'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -45,9 +47,10 @@ function Pagination({ page, total, pageSize, onChange }: PaginationProps) {
         <button
           disabled={page >= totalPages}
           onClick={() => onChange(page + 1)}
-          className="rounded px-2.5 py-1 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          aria-label="Next page"
+          className="rounded px-2 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          →
+          <ChevronRight className="h-4 w-4" />
         </button>
       </div>
     </div>

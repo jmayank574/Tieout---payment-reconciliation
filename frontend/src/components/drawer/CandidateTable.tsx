@@ -47,7 +47,7 @@ export function CandidateTable({ candidates, selectedIds, onToggle }: CandidateT
                 key={le.id}
                 onClick={() => onToggle(le.id)}
                 className={`cursor-pointer transition-colors ${
-                  isSelected ? 'bg-[#F0FAFB]' : 'hover:bg-gray-50'
+                  isSelected ? 'bg-accent-light' : 'hover:bg-gray-50'
                 }`}
               >
                 <td className="px-3 py-2.5">
@@ -56,7 +56,7 @@ export function CandidateTable({ candidates, selectedIds, onToggle }: CandidateT
                     checked={isSelected}
                     onChange={() => onToggle(le.id)}
                     onClick={e => e.stopPropagation()}
-                    className="rounded border-gray-300 text-[#0C7785] focus:ring-[#0C7785]/30"
+                    className="rounded border-gray-300 text-accent focus:ring-accent/30"
                     aria-label={`Select ${le.id}`}
                   />
                 </td>
@@ -64,7 +64,7 @@ export function CandidateTable({ candidates, selectedIds, onToggle }: CandidateT
                   <p className="font-medium text-gray-900 text-xs">
                     {le.entry_type.replace(/_/g, ' ')}
                   </p>
-                  <p className="text-[11px] text-gray-400" style={{ fontFamily: '"JetBrains Mono", monospace' }}>
+                  <p className="font-mono text-[11px] text-gray-400">
                     {le.expected_date} · {le.counterparty ?? '—'}
                   </p>
                 </td>
@@ -75,14 +75,11 @@ export function CandidateTable({ candidates, selectedIds, onToggle }: CandidateT
                   <div className="flex items-center gap-1.5">
                     <div className="relative h-1 w-10 rounded-full bg-gray-200 overflow-hidden">
                       <div
-                        className="absolute inset-y-0 left-0 rounded-full bg-[#0C7785]"
+                        className="absolute inset-y-0 left-0 rounded-full bg-accent"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
-                    <span
-                      className="text-[11px] text-gray-600"
-                      style={{ fontFamily: '"JetBrains Mono", monospace' }}
-                    >
+                    <span className="font-mono text-[11px] text-gray-600">
                       {pct}%
                     </span>
                   </div>

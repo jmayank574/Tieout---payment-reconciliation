@@ -1,3 +1,4 @@
+import { ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { GroupPosition } from '../api/types';
@@ -42,19 +43,22 @@ function SortHeader({
   sortKey: SortKey;
   current: SortKey;
   dir: SortDir;
-  align?: 'right';
+  align?: 'right' | 'center';
   onSort: (k: SortKey) => void;
 }) {
   const active = current === sortKey;
+  const Icon = dir === 'asc' ? ChevronUp : ChevronDown;
   return (
     <th
-      className={`pb-2 text-[10px] font-medium uppercase tracking-wider text-gray-400 cursor-pointer select-none hover:text-gray-600 transition-colors ${align === 'right' ? 'text-right' : ''}`}
+      className={`px-3 py-2 text-[10px] font-medium uppercase tracking-wider text-gray-400 cursor-pointer select-none hover:text-gray-600 transition-colors ${
+        align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'
+      }`}
       onClick={() => onSort(sortKey)}
     >
-      {label}
-      {active && (
-        <span className="ml-1 text-[#0C7785]">{dir === 'asc' ? '↑' : '↓'}</span>
-      )}
+      <span className={`inline-flex items-center gap-0.5 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
+        {label}
+        {active && <Icon className="h-3 w-3 text-accent" />}
+      </span>
     </th>
   );
 }
@@ -119,36 +123,20 @@ export function CashPositionPage() {
             ))}
           </div>
         ) : (
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px]">
             <thead>
-              <tr className="border-b border-gray-100 px-5">
-                <th className="px-5 py-2 text-left">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400 cursor-pointer select-none hover:text-gray-600" onClick={() => handleSort('name')}>
-                    Group {sortKey === 'name' && <span className="text-[#0C7785]">{sortDir === 'asc' ? '↑' : '↓'}</span>}
-                  </span>
+              <tr className="border-b border-gray-100">
+                <SortHeader label="Group" sortKey="name" current={sortKey} dir={sortDir} onSort={handleSort} />
+                <SortHeader label="Funded balance" sortKey="funded" current={sortKey} dir={sortDir} align="right" onSort={handleSort} />
+                <SortHeader label="Pending liability" sortKey="pending" current={sortKey} dir={sortDir} align="right" onSort={handleSort} />
+                <th className="px-3 py-2 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400">
+                  Available
                 </th>
-                <th className="px-3 py-2 text-right">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400 cursor-pointer select-none hover:text-gray-600" onClick={() => handleSort('funded')}>
-                    Funded balance {sortKey === 'funded' && <span className="text-[#0C7785]">{sortDir === 'asc' ? '↑' : '↓'}</span>}
-                  </span>
-                </th>
-                <th className="px-3 py-2 text-right">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400 cursor-pointer select-none hover:text-gray-600" onClick={() => handleSort('pending')}>
-                    Pending liability {sortKey === 'pending' && <span className="text-[#0C7785]">{sortDir === 'asc' ? '↑' : '↓'}</span>}
-                  </span>
-                </th>
-                <th className="px-3 py-2 text-right">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
-                    Available
-                  </span>
-                </th>
-                <th className="px-3 py-2 text-center">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400 cursor-pointer select-none hover:text-gray-600" onClick={() => handleSort('coverage')}>
-                    Status {sortKey === 'coverage' && <span className="text-[#0C7785]">{sortDir === 'asc' ? '↑' : '↓'}</span>}
-                  </span>
-                </th>
-                <th className="px-3 py-2 text-right">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Members</span>
+                <SortHeader label="Status" sortKey="coverage" current={sortKey} dir={sortDir} align="center" onSort={handleSort} />
+                <th className="px-3 py-2 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400">Members</th>
+                <th className="px-3 py-2">
+                  <span className="sr-only">Actions</span>
                 </th>
               </tr>
             </thead>
@@ -156,7 +144,7 @@ export function CashPositionPage() {
               {groups.map(group => (
                 <tr
                   key={group.group_id}
-                  className="hover:bg-[#F0FAFB] cursor-pointer transition-colors"
+                  className="hover:bg-accent-light cursor-pointer transition-colors"
                   onClick={() => openGroup(group)}
                 >
                   <td className="px-5 py-3 text-sm font-medium text-gray-900">{group.group_name}</td>
@@ -189,16 +177,18 @@ export function CashPositionPage() {
                   <td className="px-3 py-3 text-right">
                     <button
                       onClick={e => drillToQueue(group, e)}
-                      className="text-xs font-medium text-[#0C7785] hover:underline whitespace-nowrap"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline whitespace-nowrap"
                       title={`View ${group.group_name}'s exceptions in the queue`}
                     >
-                      View exceptions →
+                      View exceptions
+                      <ArrowRight className="h-3 w-3" />
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

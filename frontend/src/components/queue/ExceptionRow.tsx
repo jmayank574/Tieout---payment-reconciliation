@@ -40,9 +40,9 @@ export function ExceptionRow({ item, isSelected, onClick }: ExceptionRowProps) {
       tabIndex={0}
       role="row"
       aria-selected={isSelected}
-      className={`cursor-pointer border-b border-gray-100 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0C7785]/40 ${
+      className={`cursor-pointer border-b border-gray-100 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/40 ${
         isSelected
-          ? 'bg-[#F0FAFB]'
+          ? 'bg-accent-light'
           : 'hover:bg-gray-50'
       }`}
     >
@@ -51,10 +51,7 @@ export function ExceptionRow({ item, isSelected, onClick }: ExceptionRowProps) {
         <p className="text-sm font-medium text-gray-900 truncate max-w-xs">
           {item.descriptor ?? <span className="text-gray-400 italic">No descriptor</span>}
         </p>
-        <p
-          className="mt-0.5 text-[11px] text-gray-400 truncate"
-          style={{ fontFamily: '"JetBrains Mono", monospace' }}
-        >
+        <p className="mt-0.5 truncate font-mono text-[11px] text-gray-400">
           {item.bank_event_id.slice(0, 8)}…
         </p>
       </td>
@@ -86,7 +83,7 @@ export function ExceptionRow({ item, isSelected, onClick }: ExceptionRowProps) {
 
       {/* Age */}
       <td className={`px-4 py-3 text-sm ${ageClass(item.posted_date)}`}>
-        <span style={{ fontFamily: '"JetBrains Mono", monospace' }}>
+        <span className="font-mono">
           {age(item.posted_date)}
         </span>
       </td>

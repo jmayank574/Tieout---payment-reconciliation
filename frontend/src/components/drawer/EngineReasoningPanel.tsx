@@ -20,15 +20,9 @@ function LedgerEntryCard({ entry }: { entry: LedgerEntry }) {
           className="text-sm font-semibold text-gray-900"
         />
       </div>
-      <div className="flex items-center gap-4 text-[11px] text-gray-400">
-        <span style={{ fontFamily: '"JetBrains Mono", monospace' }}>
-          Expected {entry.expected_date}
-        </span>
-        {entry.reference && (
-          <span style={{ fontFamily: '"JetBrains Mono", monospace' }}>
-            ref {entry.reference}
-          </span>
-        )}
+      <div className="flex items-center gap-4 font-mono text-[11px] text-gray-400">
+        <span>Expected {entry.expected_date}</span>
+        {entry.reference && <span>ref {entry.reference}</span>}
       </div>
     </div>
   );
@@ -52,10 +46,7 @@ export function EngineReasoningPanel({ detail }: EngineReasoningPanelProps) {
         <div className="flex items-center gap-2">
           <MatchTypeBadge matchType={detail.match_type} />
           {pct != null && (
-            <span
-              className="text-sm font-semibold"
-              style={{ color, fontFamily: '"JetBrains Mono", monospace' }}
-            >
+            <span className="font-mono text-sm font-semibold" style={{ color }}>
               {pct}%
             </span>
           )}

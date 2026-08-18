@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Candidate } from '../../api/types';
+import { Button } from '../shared/Button';
 import { Money } from '../shared/Money';
 
 interface SplitRow {
@@ -61,8 +62,7 @@ export function SplitForm({ bankAmount, candidates, isSubmitting, onSubmit, onCa
               value={row.amount}
               onChange={e => updateAmount(row.ledger_entry_id, e.target.value)}
               placeholder="0.00"
-              className="w-28 rounded-md border border-gray-200 px-2.5 py-1.5 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[#0C7785]/30 focus:border-[#0C7785]"
-              style={{ fontFamily: '"JetBrains Mono", monospace', fontVariantNumeric: 'tabular-nums' }}
+              className="w-28 rounded-md border border-gray-200 px-2.5 py-1.5 text-sm text-right font-mono tabular-nums focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
             />
           </div>
         </div>
@@ -93,10 +93,9 @@ export function SplitForm({ bankAmount, candidates, isSubmitting, onSubmit, onCa
           <div className="flex items-center gap-2">
             <span className="text-[11px] text-gray-400">Total</span>
             <span
-              className={`text-sm font-semibold ${
+              className={`font-mono text-sm font-semibold ${
                 isOver ? 'text-red-600' : isFull ? 'text-emerald-600' : 'text-gray-900'
               }`}
-              style={{ fontFamily: '"JetBrains Mono", monospace' }}
             >
               ${sum.toFixed(2)}
             </span>
@@ -107,19 +106,10 @@ export function SplitForm({ bankAmount, candidates, isSubmitting, onSubmit, onCa
       </div>
 
       <div className="flex items-center gap-2">
-        <button
-          onClick={handleSubmit}
-          disabled={!canSubmit || isSubmitting}
-          className="flex-1 rounded-lg bg-[#0C7785] px-4 py-2 text-sm font-medium text-white hover:bg-[#0a6370] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
+        <Button variant="primary" onClick={handleSubmit} disabled={!canSubmit || isSubmitting} className="flex-1">
           {isSubmitting ? 'Submitting…' : isFull ? 'Resolve (split)' : 'Partial resolve'}
-        </button>
-        <button
-          onClick={onCancel}
-          className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          Cancel
-        </button>
+        </Button>
+        <Button variant="secondary" onClick={onCancel}>Cancel</Button>
       </div>
     </div>
   );
